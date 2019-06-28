@@ -285,16 +285,15 @@ p{
 
 	</div>
   <hr class="mt-2 mb-5">
-
   <div class="row text-center text-lg-left" style="position: relative; z-index: -1"> 
-
-     <div class="col-lg-3 col-md-4 col-6" id="ajax">
-		 <?php 
-		    @$id = $_GET['idLoai'];
-		 	$sl = "SELECT * FROM sanpham WHERE idLoai='$id'";
-		 	$result = mysqli_query($con,$sl);
-		 	$dem = mysqli_num_rows($result);
-		 	while($num = mysqli_fetch_array($result)){ ?>
+	<?php 
+		$product_id = '';
+	   @$id = $_GET['idLoai'];
+		$sl = "SELECT * FROM sanpham WHERE idLoai='$id'";
+		$result = mysqli_query($con,$sl);
+		$dem = mysqli_num_rows($result);
+		while($num = mysqli_fetch_array($result)){ ?>
+      <div class="col-lg-3 col-md-4 col-6" id="ajax">
 				<a href="index.php?p=xemchitiet&id=<?php echo $num['idSanPham'] ?>&idLoai=<?php echo $idLoai; ?>" class="d-block mb-4 h-100">
 				  <img src="<?php echo $num['url_img'] ?>" class="image" style="width:100%">
 				  	<div class="middle">
@@ -303,9 +302,9 @@ p{
 				  	<p><?php echo $num['tenSanPham']; ?></p>
 				  	<p><?php echo $num['gia']; ?></p>
     		  </a>
-		<?php	}
+     </div>
+	  	<?php $product_id = $num['idSanPham']; }
 		 ?>
-    </div>
   </div>
 </div>
 	<script>
@@ -350,6 +349,33 @@ window.onclick = function(event) {
            });  
       });  
  });  
- </script> 
+ </script>
+<script>  
+ $(document).ready(function(){  
+      $(document).on('click', '#btn_more', function(){  
+           var last_product_id = $(this).data("vid");
+		   var idLoai = <?php echo $idLoai; ?>;
+           $('#btn_more').html("Đang tải...");  
+           $.ajax({  
+                url:"load_data.php",  
+                method:"POST",  
+                data:{last_product_id:last_product_id,idLoai:idLoai},  
+                dataType:"text",  
+                success:function(data)  
+                {  
+                     if(data != '')  
+                     {  
+                          $('#remove_row2').remove();  
+                          $('#ajax').append(data);  
+                     }  
+                     else  
+                     {  
+                          $('#btn_more').html("Không còn sản phẩm nào");  
+                     }  
+                }  
+           });  
+      });  
+ });  
+ </script>
 </body>
 </html>
